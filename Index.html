@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KelpinXD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a12;
+            min-height: 100vh;
+            color: #fff;
+            padding: 15px;
+        }
+
+        /* HEADER SECTION */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .profile-img-circle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid #a82cf0;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(168, 44, 240, 0.6);
+        }
+
+        .profile-img-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a82cf0;
+            text-shadow: 0 0 8px rgba(168, 44, 240, 0.5);
+        }
+
+        .profile-role {
+            font-size: 0.85rem;
+            color: #d0d0d0;
+            background-color: rgba(168, 44, 240, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* VIDEO SECTION */
+        .video-container {
+            width: 100%;
+            border: 2px solid #a82cf0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .anime-video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* TOMBOL PLAY YANG HILANG SAAT DITEKAN */
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #a82cf0;
+            border: 2px solid #fff;
+            cursor: pointer;
+            z-index: 10;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 53%;
+            transform: translate(-50%, -50%);
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 15px solid #fff;
+        }
+
+        .play-button.paused::before {
+            border-top: 10px solid #fff;
+            border-bottom: 10px solid #fff;
+            border-left: 10px solid #fff;
+            width: 8px;
+            height: 20px;
+            left: 50%;
+            border-radius: 1px;
+        }
+
+        .play-button.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 5;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* TAB BUTTONS */
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #a82cf0;
+            border-radius: 7px;
+            background: transparent;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: #a82cf0;
+            box-shadow: 0 0 12px rgba(168, 44, 240, 0.6);
+        }
+
+        /* FORM SECTIONS */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(25, 25, 40, 0.8);
+            border: 2px solid #a82cf0;
+            border-radius: 7px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: #b0b0b0;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/109/109617.png');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 14px;
+            filter: invert(28%) sepia(98%) saturate(5687%) hue-rotate(271deg) brightness(89%) contrast(97%);
+        }
+
+        /* SUBMIT BUTTON */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #9524d0, #b82ff5);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 18px rgba(168, 44, 240, 0.5);
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 22px rgba(168, 44, 240, 0.7);
+        }
+
+        /* HIDDEN TAB CONTENT */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="profile-img-circle">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8MXaF0smr5ibtDlKHQ1YJ72cVQ2AFWfK_Yd7ZOUJJlg&s=10" alt="Profil">
+        </div>
+        <div class="profile-info">
+            <div class="profile-name">KelpinXD</div>
+            <div class="profile-role">Role: OWNER • Exp: 2026-05-03</div>
+        </div>
+    </div>
+
+    <!-- VIDEO CONTAINER -->
+    <div class="video-container">
+        <video class="anime-video" id="animeVideo">
+            <source src="content://media/external/downloads/1000339711" type="video/mp4">
+            Browser Anda tidak mendukung pemutar video.
+        </video>
+        <div class="video-overlay" id="videoOverlay"></div>
+        <div class="play-button" id="playButton"></div>
+    </div>
+
+    <!-- TAB NAVIGATION -->
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="showTab('nomor-tab')">BUG NOMOR</button>
+        <button class="tab-btn" onclick="showTab('group-tab')">BUG GROUP</button>
+    </div>
+
+    <!-- BUG NOMOR CONTENT -->
+    <div id="nomor-tab" class="tab-content active">
+        <div class="form-group">
+            <label class="form-label">NOMOR TARGET</label>
+            <input type="text" class="form-input" placeholder="Contoh: +62xxxxxxxxxxx">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">PILIH BUG</label>
+            <select class="form-select">
+                <option>CRASH WHATSAPP</option>
+                <option>DELAY INVISIBLE</option>
+                <option>MESSAGE FLOOD</option>
+            </select>
+        </div>
+
+        <button class="submit-btn">SEND BUG ATTACK</button>
+    </div>
+
+    <!-- BUG GROUP CONTENT -->
+    <div id="group-tab" class="tab-content">
+        <div class="form-group">
+            <label class="form-label">GROUP TARGET</label>
+            <input type="text" class="form-input" placeholder="Contoh: Link Group / ID Group">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">PILIH BUG GROUP</label>
+            <select class="form-select">
+                <option>GROUP CRASH</option>
+                <option>GROUP MESSAGE FLOOD</option>
+                <option>MEMBER LIST DISRUPTION</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">JUMLAH KIRIMAN</label>
+            <select class="form-select">
+                <option>50x (STANDARD)</option>
+                <option>100x (MEDIUM)</option>
+                <option>200x (HIGH)</option>
+            </select>
+        </div>
+
+        <button class="submit-btn">SEND GROUP ATTACK</button>
+    </div>
+
+    <script>
+        // Fungsi Tab Navigasi
+        function showTab(tabId) {
+            const allContents = document.querySelectorAll('.tab-content');
+            allContents.forEach(content => content.classList.remove('active'));
+            
+            const allButtons = document.querySelectorAll('.tab-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Fungsi Tombol Play Video
+        const video = document.getElementById('animeVideo');
+        const playButton = document.getElementById('playButton');
+        const videoOverlay = document.getElementById('videoOverlay');
+
+        playButton.addEventListener('click', togglePlay);
+        video.addEventListener('click', togglePlay);
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                playButton.classList.add('hidden'); // Tombol hilang saat play
+                videoOverlay.classList.add('hidden'); // Overlay hilang juga
+            } else {
+                video.pause();
+                playButton.classList.remove('hidden'); // Tombol muncul kembali saat pause
+                videoOverlay.classList.remove('hidden');
+            }
+        }
+
+        // Tombol muncul kembali saat video selesai
+        video.addEventListener('ended', () => {
+            playButton.classList.remove('hidden');
+            videoOverlay.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
